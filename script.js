@@ -92,30 +92,36 @@ function animateFragments() {
 }
 
 // Timer function
+const timeInput = document.getElementById("timeInput"); // ← Get the input element
+
+// Timer function
 function startTimer() {
-    if (isRunning) return;
-    isRunning = true;
-    let countdown = timeLeft;
+  if (isRunning) return;
+  isRunning = true;
 
-    const interval = setInterval(() => {
-        if (countdown <= 0) {
-            clearInterval(interval);
-            isRunning = false;
-        } else {
-            countdown--;
-            timerDisplay.textContent = countdown + "s";
-        }
-    }, 1000);
+  timeLeft = parseInt(timeInput.value) || 30; // ← Pull from input
+  let countdown = timeLeft;
+  timerDisplay.textContent = countdown + "s";
 
-    animateFragments();
+  const interval = setInterval(() => {
+    if (countdown <= 0) {
+      clearInterval(interval);
+      isRunning = false;
+    } else {
+      countdown--;
+      timerDisplay.textContent = countdown + "s";
+    }
+  }, 1000);
+
+  animateFragments();
 }
 
 // Reset function
 function resetTimer() {
-    isRunning = false;
-    timeLeft = 10;
-    timerDisplay.textContent = "10s";
-    createFragments();
+  isRunning = false;
+  timeLeft = parseInt(timeInput.value) || 30;
+  timerDisplay.textContent = timeLeft + "s";
+  createFragments();
 }
 
 // Event listeners
