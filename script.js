@@ -12,10 +12,16 @@ let fragmentAnimations = [];
 let startTime = 0;
 let pausedTimeRemaining = null;
 
+// }function formatTime(ms) {
+//   const seconds = Math.floor(ms / 1000);
+//   const tenths = Math.floor((ms % 1000) / 100);
+//   return `${seconds}.${tenths}`;
+// }
+
 function formatTime(ms) {
   const seconds = Math.floor(ms / 1000);
-  const tenths = Math.floor((ms % 1000) / 100);
-  return `${seconds}.${tenths}`;
+  const tenths = ms % 10;
+  return `${seconds}s ${milliseconds.toString().padStart(1, "0")}ms`;
 }
 
 function createFragments() {
