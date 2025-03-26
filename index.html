@@ -8,22 +8,25 @@
 </head>
 <body>
     <body>
-        <h1>Fragment Tomato Timer</h1>
-
-        <!-- Tomato Container -->
-        <div class="container">
-            <div id="tomato-area"></div>
+        <div id="timer-display">30s</div>
+        <div id="tomato-area"></div>
+        <div id="smiley">
+          <div class="eye left"></div>
+          <div class="eye right"></div>
+          <div class="mouth"></div>
+          <div class="hair"></div>
         </div>
-    
-        <!-- Timer and Controls Section -->
+      
         <div class="controls">
-            <p id="timer-display">60s</p>
-            <button id="start">Start</button>
-            <button id="reset">Reset</button>
+          <div class="duration-input">
+            <label for="duration">Duration (seconds):</label>
+            <input type="number" id="duration" min="10" max="300" value="30">
+          </div>
+          <button id="start">Start</button>
+          <button id="stop">Stop</button>
+          <button id="reset">Reset</button>
         </div>
-        <label for="timeInput">Set Timer (seconds):</label>
-        <input type="number" id="timeInput" min="10" max="999" value="99">
-    
+      
     <script src="script.js"></script>
 </body>
 </html>

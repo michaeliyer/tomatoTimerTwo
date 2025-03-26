@@ -1,113 +1,201 @@
-
-
 body {
-    text-align: center;
-    font-family: Arial, sans-serif;
-    background-color: #222;
-    color: white;
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background-color: #1a1a1a;
+  color: white;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 #tomato-area {
-    width: 10rem; 
-    height: 10rem;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 35rem;
+  height: 35rem;
+  border: 0.2rem solid #222;
+  border-radius: 2rem;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #d4d1d1;
+  /* background: #1a1a1a; */
 }
-
-
-
 
 .fragment {
-    position: absolute;
-    width: 2rem;
-    height: 2rem;
-    background: red;
-    clip-path: polygon(
-        10% 0%, 90% 0%, 100% 10%, 100% 90%,
-        90% 100%, 10% 100%, 0% 90%, 0% 10%
-    );
+  position: absolute;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: red;
+  clip-path: circle(45%);
+  opacity: 1;
+  transition: transform var(--animation-time) cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  filter: blur(0.3px);
+}
+
+@keyframes moveToSmiley {
+  0% {
+    transform: translate(var(--random-x), var(--random-y)) scale(0.3)
+      rotate(var(--random-rotation));
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(var(--mid-x), var(--mid-y)) scale(0.5)
+      rotate(var(--mid-rotation));
+    opacity: 0.5;
+  }
+  75% {
+    transform: translate(
+        calc(var(--final-x) + 2rem),
+        calc(var(--final-y) + 2rem)
+      )
+      scale(0.8) rotate(calc(var(--mid-rotation) * 0.3));
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(var(--final-x), var(--final-y)) scale(1) rotate(0deg);
     opacity: 1;
-    transition: transform var(--animation-time) ease-in-out;
+  }
 }
 
-
-@keyframes moveToTomato {
-    0% {
-        transform: translate(var(--random-x), var(--random-y)) scale(0.6);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translate(var(--final-x), var(--final-y)) scale(1);
-        opacity: 1;
-    }
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-
-.stem {
-    position: absolute;
-    width: 3rem;
-    height: 3rem;
-    background: none;
-    border-top: 5px solid green;
-    border-radius: 50%;
-    top: 5vh; 
-    transform: translateY(-50%);
-    opacity: 0;
-    transition: opacity 2s ease-in-out;
+#smiley {
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+  background-color: red;
+  z-index: 5;
+  display: none;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
 }
 
+.eye,
+.mouth,
+.hair {
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.smiley-show .eye,
+.smiley-show .mouth,
+.smiley-show .hair {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.eye {
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  background: black;
+  border-radius: 50%;
+  top: 30%;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.eye.left {
+  left: 30%;
+}
+.eye.right {
+  right: 30%;
+}
+
+.mouth {
+  position: absolute;
+  bottom: 20%;
+  left: 26%;
+  transform: translateX(-50%);
+  width: 8rem;
+  height: 4rem;
+  border-radius: 0 0 8rem 8rem;
+  background: black;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hair {
+  position: absolute;
+  top: -4rem;
+  left: 50%;
+  width: 0.8rem;
+  height: 4rem;
+  background-color: black;
+  border-radius: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mouth,
+.hair {
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
 
 .controls {
-    text-align: center;
-    margin-top: 2rem;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 1rem;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-    z-index: 100;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.duration-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.duration-input input {
+  width: 4rem;
+  padding: 0.3rem;
+  font-size: 1rem;
+}
+
+.duration-input label {
+  font-size: 1rem;
 }
 
 #timer-display {
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  font-family: monospace;
+  letter-spacing: 0.1em;
 }
 
 button {
-    font-size: 1rem;
-    padding: 0.5rem 1rem;
-    border: none;
-    background-color: #ff4d4d;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #cc0000;
-} 
-
+  background-color: #555;
+}
