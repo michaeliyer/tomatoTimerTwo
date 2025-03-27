@@ -5,29 +5,37 @@ const resetButton = document.getElementById("reset");
 const timerDisplay = document.getElementById("timer-display");
 const durationInput = document.getElementById("duration");
 
-let timeLeft = 30;
+let timeLeft = 60;
 let isRunning = false;
 let animationFrameId = null;
 let fragmentAnimations = [];
 let startTime = 0;
 let pausedTimeRemaining = null;
 
-// }function formatTime(ms) {
+
+// function formatTime(ms) {
 //   const seconds = Math.floor(ms / 1000);
-//   const tenths = Math.floor((ms % 1000) / 100);
-//   return `${seconds}.${tenths}`;
+//   const tenths = Math.floor((ms % 1000) / 100); // Extract tenths
+//   return `${seconds}.${tenths}s`;
 // }
 
 function formatTime(ms) {
   const seconds = Math.floor(ms / 1000);
-  const tenths = ms % 10;
-  return `${seconds}s ${milliseconds.toString().padStart(1, "0")}ms`;
+  const hundredths = Math.floor((ms % 1000) / 10); // Extract hundredths
+  return `${seconds}.${hundredths}s`;
 }
+// function formatTime(ms) {
+//   const seconds = Math.floor(ms / 1000);
+//   const thousandths = Math.floor((ms % 1000) / 1); // Extract hundredths
+//   return `${seconds}.${thousandths}s`;
+// }
+
+
 
 function createFragments() {
   tomatoArea.innerHTML = "";
-  const fragmentSize = 0.25; // Even smaller fragments
-  const numFragments = 2500; // Many more fragments for blizzard effect
+  const fragmentSize = 0.5; // Even smaller fragments
+  const numFragments = 400; // Many more fragments for blizzard effect
   const radius = 12;
 
   // Calculate how many fragments we need for each feature
@@ -142,6 +150,8 @@ function createFragments() {
     tomatoArea.appendChild(fragment);
   }
 }
+
+
 
 function animateFragments() {
   const fragments = document.querySelectorAll(".fragment");

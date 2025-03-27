@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #d4d1d1;
+  background: #000000;
   /* background: #1a1a1a; */
 }
 
@@ -34,9 +34,10 @@ body {
   clip-path: circle(45%);
   opacity: 1;
   transition: transform var(--animation-time) cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  will-change: transform, background-color;
   filter: blur(0.3px);
 }
+
 
 @keyframes moveToSmiley {
   0% {
@@ -109,15 +110,15 @@ body {
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 .eye.left {
-  left: 30%;
+  left: 25%;
 }
 .eye.right {
-  right: 30%;
+  right: 25%;
 }
 
 .mouth {
   position: absolute;
-  bottom: 20%;
+  bottom: 15%;
   left: 26%;
   transform: translateX(-50%);
   width: 8rem;
@@ -145,6 +146,8 @@ body {
   animation: fadeIn 2s ease forwards;
   animation-delay: 0.3s;
 }
+
+
 
 @keyframes fadeIn {
   to {
