@@ -35,7 +35,7 @@ function formatTime(ms) {
 function createFragments() {
   tomatoArea.innerHTML = "";
   const fragmentSize = 0.5; // Even smaller fragments
-  const numFragments = 400; // Many more fragments for blizzard effect
+  const numFragments = 750; // Many more fragments for blizzard effect
   const radius = 12;
 
   // Calculate how many fragments we need for each feature

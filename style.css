@@ -1,7 +1,7 @@
 body {
   text-align: center;
   font-family: Arial, sans-serif;
-  background-color: #1a1a1a;
+  background-color: #000000;
   color: white;
   margin: 0;
   padding: 0;
@@ -75,8 +75,8 @@ body {
 
 #smiley {
   position: absolute;
-  width: 16rem;
-  height: 16rem;
+  width: 13rem;
+  height: 13rem;
   border-radius: 50%;
   background-color: red;
   z-index: 5;
@@ -192,8 +192,8 @@ button {
   padding: 0.5rem 1rem;
   margin: 0.5rem;
   cursor: pointer;
-  background-color: #444;
-  color: white;
+  background-color: #000000;
+  color: red;
   border: none;
   border-radius: 4px;
   transition: background-color 0.2s;
@@ -201,4 +201,9 @@ button {
 
 button:hover {
   background-color: #555;
+}
+
+#duration {
+  background-color: #000000;
+  color: red;
 }
