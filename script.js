@@ -3,12 +3,14 @@ const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const resetButton = document.getElementById("reset");
 const timerDisplay = document.getElementById("timer-display");
-const durationInput = document.getElementById("duration");
-const incrementButton = document.getElementById("increment");
-const decrementButton = document.getElementById("decrement");
-const timeUnitSelect = document.getElementById("timeUnit");
+const minutesInput = document.getElementById("minutes");
+const secondsInput = document.getElementById("seconds");
+const incrementMinutesButton = document.getElementById("increment-minutes");
+const decrementMinutesButton = document.getElementById("decrement-minutes");
+const incrementSecondsButton = document.getElementById("increment-seconds");
+const decrementSecondsButton = document.getElementById("decrement-seconds");
 
-let timeLeft = 30;
+let timeLeft = 150; // 2:30 in seconds
 let isRunning = false;
 let animationFrameId = null;
 let fragmentAnimations = [];
@@ -16,44 +18,57 @@ let startTime = 0;
 let pausedTimeRemaining = null;
 
 function formatTime(ms) {
+  if (ms === null || ms === undefined) return "--:--";
+
   const minutes = Math.floor(ms / 60000);
   const seconds = Math.floor((ms % 60000) / 1000);
   const hundredths = Math.floor((ms % 1000) / 10);
 
-  if (minutes > 0) {
-    return `${minutes}:${seconds.toString().padStart(2, "0")}.${hundredths
-      .toString()
-      .padStart(2, "0")}`;
-  }
-  return `${seconds}.${hundredths.toString().padStart(2, "0")}s`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}.${hundredths
+    .toString()
+    .padStart(2, "0")}`;
 }
 
 function updateDisplay() {
-  const timeUnit = timeUnitSelect.value;
-  const value = parseInt(durationInput.value) || 0;
+  const minutes = parseInt(minutesInput.value) || 0;
+  const seconds = parseInt(secondsInput.value) || 0;
+  timeLeft = minutes * 60 + seconds;
 
-  if (timeUnit === "minutes") {
-    timerDisplay.textContent = `${value}m`;
+  if (timeLeft > 0) {
+    timerDisplay.textContent = formatTime(timeLeft * 1000);
   } else {
-    timerDisplay.textContent = `${value}s`;
+    timerDisplay.textContent = "--:--";
   }
 }
 
-function incrementTime() {
-  const currentValue = parseInt(durationInput.value) || 0;
-  const timeUnit = timeUnitSelect.value;
-  const maxValue = timeUnit === "minutes" ? 5 : 300;
-
-  if (currentValue < maxValue) {
-    durationInput.value = currentValue + 1;
+function incrementMinutes() {
+  const currentValue = parseInt(minutesInput.value) || 0;
+  if (currentValue < 5) {
+    minutesInput.value = currentValue + 1;
     updateDisplay();
   }
 }
 
-function decrementTime() {
-  const currentValue = parseInt(durationInput.value) || 0;
-  if (currentValue > 1) {
-    durationInput.value = currentValue - 1;
+function decrementMinutes() {
+  const currentValue = parseInt(minutesInput.value) || 0;
+  if (currentValue > 0) {
+    minutesInput.value = currentValue - 1;
+    updateDisplay();
+  }
+}
+
+function incrementSeconds() {
+  const currentValue = parseInt(secondsInput.value) || 0;
+  if (currentValue < 59) {
+    secondsInput.value = currentValue + 1;
+    updateDisplay();
+  }
+}
+
+function decrementSeconds() {
+  const currentValue = parseInt(secondsInput.value) || 0;
+  if (currentValue > 0) {
+    secondsInput.value = currentValue - 1;
     updateDisplay();
   }
 }
@@ -183,16 +198,17 @@ function animateFragments() {
 
   // Calculate timing for perfect finish
   const totalDuration = timeLeft * 1000;
-  const fragmentDelay = 5; // 5ms between each fragment start
+  const fragmentDelay = 2; // Reduced delay between fragments for smoother animation
   const lastFragmentStart = fragments.length * fragmentDelay;
+
+  // Calculate the actual animation duration to ensure all fragments finish at timer end
+  const animationDuration = (totalDuration - lastFragmentStart) / 1000;
 
   // Adjust animation duration to ensure all fragments finish exactly at timer end
   fragments.forEach((frag, i) => {
     const animation = setTimeout(() => {
-      // Calculate remaining time for this specific fragment
-      const remainingTime = totalDuration - i * fragmentDelay;
-      const adjustedDuration = remainingTime / 1000;
-      frag.style.animation = `moveToSmiley ${adjustedDuration}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+      // Set the animation duration for each fragment
+      frag.style.animation = `moveToSmiley ${animationDuration}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
     }, i * fragmentDelay);
     fragmentAnimations.push(animation);
   });
@@ -201,16 +217,11 @@ function animateFragments() {
 function startTimer() {
   if (isRunning) return;
 
-  const newDuration = parseInt(durationInput.value);
-  const timeUnit = timeUnitSelect.value;
+  const minutes = parseInt(minutesInput.value) || 0;
+  const seconds = parseInt(secondsInput.value) || 0;
+  timeLeft = minutes * 60 + seconds;
 
-  if (timeUnit === "minutes") {
-    timeLeft = newDuration * 60;
-  } else {
-    timeLeft = newDuration;
-  }
-
-  if (timeLeft >= 1 && timeLeft <= 300) {
+  if (timeLeft > 0 && timeLeft <= 300) {
     isRunning = true;
 
     if (pausedTimeRemaining !== null) {
@@ -288,10 +299,12 @@ function resetTimer() {
 startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
-incrementButton.addEventListener("click", incrementTime);
-decrementButton.addEventListener("click", decrementTime);
-timeUnitSelect.addEventListener("change", updateDisplay);
-durationInput.addEventListener("input", updateDisplay);
+incrementMinutesButton.addEventListener("click", incrementMinutes);
+decrementMinutesButton.addEventListener("click", decrementMinutes);
+incrementSecondsButton.addEventListener("click", incrementSeconds);
+decrementSecondsButton.addEventListener("click", decrementSeconds);
+minutesInput.addEventListener("input", updateDisplay);
+secondsInput.addEventListener("input", updateDisplay);
 
 // Initialize display
 updateDisplay();

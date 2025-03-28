@@ -11,7 +11,7 @@
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <div id="timer-display">30s</div>
+    <div id="timer-display">--:--</div>
     <div id="tomato-area"></div>
     <div id="smiley">
       <div class="eye left"></div>
@@ -22,13 +22,18 @@
 
     <div class="controls">
       <div class="duration-input">
-        <button id="decrement">-</button>
-        <input type="number" id="duration" min="1" max="300" value="30" />
-        <button id="increment">+</button>
-        <select id="timeUnit">
-          <option value="seconds">Seconds</option>
-          <option value="minutes">Minutes</option>
-        </select>
+        <div class="time-input-group">
+          <label>Minutes:</label>
+          <button id="decrement-minutes">-</button>
+          <input type="number" id="minutes" min="0" max="5" value="" />
+          <button id="increment-minutes">+</button>
+        </div>
+        <div class="time-input-group">
+          <label>Seconds:</label>
+          <button id="decrement-seconds">-</button>
+          <input type="number" id="seconds" min="0" max="59" value="" />
+          <button id="increment-seconds">+</button>
+        </div>
       </div>
       <div class="timer-controls">
         <button id="start">Start</button>
