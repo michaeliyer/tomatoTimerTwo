@@ -4,33 +4,59 @@ const stopButton = document.getElementById("stop");
 const resetButton = document.getElementById("reset");
 const timerDisplay = document.getElementById("timer-display");
 const durationInput = document.getElementById("duration");
+const incrementButton = document.getElementById("increment");
+const decrementButton = document.getElementById("decrement");
+const timeUnitSelect = document.getElementById("timeUnit");
 
-let timeLeft = 60;
+let timeLeft = 30;
 let isRunning = false;
 let animationFrameId = null;
 let fragmentAnimations = [];
 let startTime = 0;
 let pausedTimeRemaining = null;
 
-
-// function formatTime(ms) {
-//   const seconds = Math.floor(ms / 1000);
-//   const tenths = Math.floor((ms % 1000) / 100); // Extract tenths
-//   return `${seconds}.${tenths}s`;
-// }
-
 function formatTime(ms) {
-  const seconds = Math.floor(ms / 1000);
-  const hundredths = Math.floor((ms % 1000) / 10); // Extract hundredths
-  return `${seconds}.${hundredths}s`;
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const hundredths = Math.floor((ms % 1000) / 10);
+
+  if (minutes > 0) {
+    return `${minutes}:${seconds.toString().padStart(2, "0")}.${hundredths
+      .toString()
+      .padStart(2, "0")}`;
+  }
+  return `${seconds}.${hundredths.toString().padStart(2, "0")}s`;
 }
-// function formatTime(ms) {
-//   const seconds = Math.floor(ms / 1000);
-//   const thousandths = Math.floor((ms % 1000) / 1); // Extract hundredths
-//   return `${seconds}.${thousandths}s`;
-// }
 
+function updateDisplay() {
+  const timeUnit = timeUnitSelect.value;
+  const value = parseInt(durationInput.value) || 0;
 
+  if (timeUnit === "minutes") {
+    timerDisplay.textContent = `${value}m`;
+  } else {
+    timerDisplay.textContent = `${value}s`;
+  }
+}
+
+function incrementTime() {
+  const currentValue = parseInt(durationInput.value) || 0;
+  const timeUnit = timeUnitSelect.value;
+  const maxValue = timeUnit === "minutes" ? 5 : 300;
+
+  if (currentValue < maxValue) {
+    durationInput.value = currentValue + 1;
+    updateDisplay();
+  }
+}
+
+function decrementTime() {
+  const currentValue = parseInt(durationInput.value) || 0;
+  if (currentValue > 1) {
+    durationInput.value = currentValue - 1;
+    updateDisplay();
+  }
+}
 
 function createFragments() {
   tomatoArea.innerHTML = "";
@@ -151,8 +177,6 @@ function createFragments() {
   }
 }
 
-
-
 function animateFragments() {
   const fragments = document.querySelectorAll(".fragment");
   fragmentAnimations = [];
@@ -178,85 +202,96 @@ function startTimer() {
   if (isRunning) return;
 
   const newDuration = parseInt(durationInput.value);
-  if (newDuration >= 10 && newDuration <= 300) {
+  const timeUnit = timeUnitSelect.value;
+
+  if (timeUnit === "minutes") {
+    timeLeft = newDuration * 60;
+  } else {
     timeLeft = newDuration;
   }
 
-  isRunning = true;
+  if (timeLeft >= 1 && timeLeft <= 300) {
+    isRunning = true;
 
-  // If we're resuming from a pause, adjust the start time
-  if (pausedTimeRemaining !== null) {
-    startTime = Date.now() - (timeLeft * 1000 - pausedTimeRemaining);
-    pausedTimeRemaining = null;
-  } else {
-    startTime = Date.now();
-  }
-
-  // Hide the base smiley face
-  const smiley = document.getElementById("smiley");
-  smiley.style.display = "none";
-
-  // Start the fragment animations
-  animateFragments();
-
-  function updateTimer() {
-    if (!isRunning) return;
-
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const remainingTime = Math.max(0, timeLeft * 1000 - elapsedTime);
-
-    timerDisplay.textContent = formatTime(remainingTime);
-
-    if (remainingTime <= 0) {
-      isRunning = false;
-      // Freeze all fragments in their final positions
-      const fragments = document.querySelectorAll(".fragment");
-      fragments.forEach((frag) => {
-        const computedStyle = window.getComputedStyle(frag);
-        frag.style.transform = computedStyle.transform;
-        frag.style.animation = "none";
-      });
-      return;
+    if (pausedTimeRemaining !== null) {
+      startTime = Date.now() - (timeLeft * 1000 - pausedTimeRemaining);
+      pausedTimeRemaining = null;
+    } else {
+      startTime = Date.now();
     }
 
+    const smiley = document.getElementById("smiley");
+    smiley.style.display = "none";
+
+    createFragments();
+    animateFragments();
+    updateTimer();
+  }
+}
+
+function updateTimer() {
+  if (!isRunning) return;
+
+  const currentTime = Date.now();
+  const elapsedTime = currentTime - startTime;
+  const remainingTime = Math.max(0, timeLeft * 1000 - elapsedTime);
+
+  timerDisplay.textContent = formatTime(remainingTime);
+
+  if (remainingTime <= 0) {
+    isRunning = false;
+    const fragments = document.querySelectorAll(".fragment");
+    fragments.forEach((frag) => {
+      const computedStyle = window.getComputedStyle(frag);
+      frag.style.transform = computedStyle.transform;
+    });
+
+    const smiley = document.getElementById("smiley");
+    smiley.style.display = "block";
+    smiley.classList.add("smiley-show");
+  } else {
     animationFrameId = requestAnimationFrame(updateTimer);
   }
-
-  updateTimer();
 }
 
 function stopTimer() {
   if (!isRunning) return;
 
   isRunning = false;
-  cancelAnimationFrame(animationFrameId);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
 
-  // Store the remaining time for potential resume
-  const elapsedTime = Date.now() - startTime;
-  pausedTimeRemaining = Math.max(0, timeLeft * 1000 - elapsedTime);
-  timerDisplay.textContent = formatTime(pausedTimeRemaining);
-
-  // Pause fragment animations
-  fragmentAnimations.forEach((animation) => clearTimeout(animation));
-  const fragments = document.querySelectorAll(".fragment");
-  fragments.forEach((frag) => {
-    const computedStyle = window.getComputedStyle(frag);
-    frag.style.transform = computedStyle.transform;
-    frag.style.animation = "none";
-  });
+  const currentTime = Date.now();
+  const elapsedTime = currentTime - startTime;
+  pausedTimeRemaining = timeLeft * 1000 - elapsedTime;
 }
 
 function resetTimer() {
   isRunning = false;
-  cancelAnimationFrame(animationFrameId);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+
   pausedTimeRemaining = null;
-  timeLeft = parseInt(durationInput.value) || 30;
-  timerDisplay.textContent = formatTime(timeLeft * 1000);
-  createFragments();
+  const smiley = document.getElementById("smiley");
+  smiley.style.display = "none";
+  smiley.classList.remove("smiley-show");
+
+  const fragments = document.querySelectorAll(".fragment");
+  fragments.forEach((frag) => frag.remove());
+
+  updateDisplay();
 }
 
+// Event Listeners
 startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
-createFragments();
+incrementButton.addEventListener("click", incrementTime);
+decrementButton.addEventListener("click", decrementTime);
+timeUnitSelect.addEventListener("change", updateDisplay);
+durationInput.addEventListener("input", updateDisplay);
+
+// Initialize display
+updateDisplay();

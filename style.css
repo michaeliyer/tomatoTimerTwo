@@ -37,7 +37,6 @@ body {
   filter: blur(0.3px);
 }
 
-
 @keyframes moveToSmiley {
   0% {
     transform: translate(var(--random-x), var(--random-y)) scale(0.3)
@@ -146,8 +145,6 @@ body {
   animation-delay: 0.3s;
 }
 
-
-
 @keyframes fadeIn {
   to {
     opacity: 1;
@@ -166,16 +163,39 @@ body {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .duration-input input {
   width: 4rem;
   padding: 0.3rem;
   font-size: 1rem;
+  text-align: center;
 }
 
-.duration-input label {
+.duration-input button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border-radius: 50%;
+}
+
+.duration-input select {
+  padding: 0.3rem;
   font-size: 1rem;
+  background-color: #000000;
+  color: red;
+  border: 1px solid red;
+  margin-left: 0.5rem;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 0.5rem;
 }
 
 #timer-display {
