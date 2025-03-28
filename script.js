@@ -85,9 +85,12 @@ function createFragments() {
   const eyeFragments = Math.floor(numFragments * 0.1);
   const hairFragments = Math.floor(numFragments * 0.1);
 
+  // Create all fragments at once
+  const fragments = [];
   for (let i = 0; i < numFragments; i++) {
     const fragment = document.createElement("div");
     fragment.classList.add("fragment");
+    fragments.push(fragment);
 
     // Calculate initial position in a circle
     const angle = (i / numFragments) * Math.PI * 2;
@@ -97,14 +100,14 @@ function createFragments() {
 
     // Wider starting positions for more dramatic effect
     const startAngle = Math.random() * Math.PI * 2;
-    const startDistance = 35 + Math.random() * 20; // Increased starting distance
+    const startDistance = 40 + Math.random() * 25;
     const randomX = Math.cos(startAngle) * startDistance + "rem";
     const randomY = Math.sin(startAngle) * startDistance + "rem";
 
     // More gradual mid-point positions
     const midAngle = (startAngle + angle) / 2 + (Math.random() - 0.5) * Math.PI;
     const midDistance =
-      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 12;
+      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 15;
     const midX = Math.cos(midAngle) * midDistance + "rem";
     const midY = Math.sin(midAngle) * midDistance + "rem";
 
@@ -189,28 +192,17 @@ function createFragments() {
 
     tomatoArea.appendChild(fragment);
   }
+
+  // Start animations immediately
+  requestAnimationFrame(() => {
+    fragments.forEach((frag) => {
+      frag.style.animation = `moveToSmiley ${timeLeft}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+    });
+  });
 }
 
 function animateFragments() {
-  const fragments = document.querySelectorAll(".fragment");
-  fragmentAnimations = [];
-
-  // Calculate timing for perfect finish
-  const totalDuration = timeLeft * 1000;
-  const fragmentDelay = 1; // Reduced delay for smoother animation
-  const lastFragmentStart = fragments.length * fragmentDelay;
-
-  // Calculate the actual animation duration to ensure all fragments finish at timer end
-  const animationDuration = (totalDuration - lastFragmentStart) / 1000;
-
-  // Adjust animation duration to ensure all fragments finish exactly at timer end
-  fragments.forEach((frag, i) => {
-    const animation = setTimeout(() => {
-      // Set the animation duration for each fragment
-      frag.style.animation = `moveToSmiley ${animationDuration}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
-    }, i * fragmentDelay);
-    fragmentAnimations.push(animation);
-  });
+  // No need for separate animation function anymore as it's handled in createFragments
 }
 
 function startTimer() {
