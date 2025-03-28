@@ -50,8 +50,8 @@ body {
   }
   75% {
     transform: translate(
-        calc(var(--final-x) + 2rem),
-        calc(var(--final-y) + 2rem)
+        calc(var(--final-x) + 1rem),
+        calc(var(--final-y) + 1rem)
       )
       scale(0.8) rotate(calc(var(--mid-rotation) * 0.3));
     opacity: 0.8;
@@ -244,4 +244,9 @@ button:hover {
   font-size: 1.5rem;
   background-color: #000000;
   color: red;
+}
+
+#seconds,
+#minutes {
+  width: 9rem;
 }

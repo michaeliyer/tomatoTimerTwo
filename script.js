@@ -75,17 +75,16 @@ function decrementSeconds() {
 
 function createFragments() {
   tomatoArea.innerHTML = "";
-  const fragmentSize = 0.5; // Even smaller fragments
-  const numFragments = 750; // Many more fragments for blizzard effect
+  const fragmentSize = 0.5;
+  const numFragments = 750;
   const radius = 12;
 
   // Calculate how many fragments we need for each feature
   const circleFragments = Math.floor(numFragments * 0.65);
   const mouthFragments = Math.floor(numFragments * 0.15);
   const eyeFragments = Math.floor(numFragments * 0.1);
-  const hairFragments = Math.floor(numFragments * 0.1); // More fragments for hair
+  const hairFragments = Math.floor(numFragments * 0.1);
 
-  // Create fragments in a more controlled way
   for (let i = 0; i < numFragments; i++) {
     const fragment = document.createElement("div");
     fragment.classList.add("fragment");
@@ -96,16 +95,16 @@ function createFragments() {
     const xPos = Math.cos(angle) * distanceFromCenter;
     const yPos = Math.sin(angle) * distanceFromCenter;
 
-    // Random starting positions in a wider circle with more chaos
+    // Wider starting positions for more dramatic effect
     const startAngle = Math.random() * Math.PI * 2;
-    const startDistance = 25 + Math.random() * 15; // Even wider starting area
+    const startDistance = 35 + Math.random() * 20; // Increased starting distance
     const randomX = Math.cos(startAngle) * startDistance + "rem";
     const randomY = Math.sin(startAngle) * startDistance + "rem";
 
-    // More chaotic mid-point positions
+    // More gradual mid-point positions
     const midAngle = (startAngle + angle) / 2 + (Math.random() - 0.5) * Math.PI;
     const midDistance =
-      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 8;
+      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 12;
     const midX = Math.cos(midAngle) * midDistance + "rem";
     const midY = Math.sin(midAngle) * midDistance + "rem";
 
@@ -116,9 +115,9 @@ function createFragments() {
     if (i < hairFragments) {
       // Hair fragments - create a curlicue pattern
       const t = i / hairFragments;
-      const curlRadius = 2; // Size of curl
-      const spiralT = t * 4 * Math.PI; // Number of spiral turns
-      const shrinkFactor = 1 - t * 0.5; // Spiral gets smaller towards the end
+      const curlRadius = 2;
+      const spiralT = t * 4 * Math.PI;
+      const shrinkFactor = 1 - t * 0.5;
       const hairX = Math.cos(spiralT) * curlRadius * shrinkFactor;
       const hairY = Math.sin(spiralT) * curlRadius * shrinkFactor - radius - 1;
       finalX = hairX + "rem";
@@ -174,9 +173,9 @@ function createFragments() {
       finalY = Math.sin(circleAngle) * frillyRadius + "rem";
     }
 
-    // More chaotic rotations
-    const randomRotation = Math.random() * 1800 - 900 + "deg"; // Even more rotation
-    const midRotation = Math.random() * 900 - 450 + "deg";
+    // More dramatic rotations
+    const randomRotation = Math.random() * 3600 - 1800 + "deg";
+    const midRotation = Math.random() * 1800 - 900 + "deg";
 
     fragment.style.setProperty("--animation-time", timeLeft + "s");
     fragment.style.setProperty("--random-x", randomX);
@@ -198,7 +197,7 @@ function animateFragments() {
 
   // Calculate timing for perfect finish
   const totalDuration = timeLeft * 1000;
-  const fragmentDelay = 2; // Reduced delay between fragments for smoother animation
+  const fragmentDelay = 1; // Reduced delay for smoother animation
   const lastFragmentStart = fragments.length * fragmentDelay;
 
   // Calculate the actual animation duration to ensure all fragments finish at timer end
