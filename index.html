@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TomatoDeal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Signika:wght@300..700&display=swap" rel="stylesheet">
-    <link href="style.css" rel="stylesheet" type="text/css" >
-</head>
-<body>
-    <body>
-        <div id="timer-display">30s</div>
-        <div id="tomato-area"></div>
-        <div id="smiley">
-          <div class="eye left"></div>
-          <div class="eye right"></div>
-          <div class="mouth"></div>
-          <div class="hair"></div>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Signika:wght@300..700&display=swap"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="timer-display">--:--</div>
+    <div id="tomato-area"></div>
+    <div id="smiley">
+      <div class="eye left"></div>
+      <div class="eye right"></div>
+      <div class="mouth"></div>
+      <div class="hair"></div>
+    </div>
+
+    <div class="controls">
+      <div class="duration-input">
+        <div class="time-input-group">
+          <label>Minutes:</label>
+          <button id="decrement-minutes">-</button>
+          <input
+            type="number"
+            id="minutes"
+            min="0"
+            max="5"
+            placeholder="Choose Minutes"
+          />
+          <button id="increment-minutes">+</button>
         </div>
       
         <div class="controls">
@@ -26,8 +43,28 @@
           <button id="start">Start</button>
           <button id="stop">Stop</button>
           <button id="reset">Reset</button>
+
+        <div class="time-input-group">
+          <label>Seconds:</label>
+          <button id="decrement-seconds">-</button>
+          <input
+            type="number"
+            id="seconds"
+            min="0"
+            max="59"
+            placeholder="Choose Seconds"
+          />
+          <button id="increment-seconds">+</button>
+
         </div>
-      
+      </div>
+      <div class="timer-controls">
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+        <button id="reset">Reset</button>
+      </div>
+    </div>
+
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

@@ -3,51 +3,94 @@ const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const resetButton = document.getElementById("reset");
 const timerDisplay = document.getElementById("timer-display");
-const durationInput = document.getElementById("duration");
+const minutesInput = document.getElementById("minutes");
+const secondsInput = document.getElementById("seconds");
+const incrementMinutesButton = document.getElementById("increment-minutes");
+const decrementMinutesButton = document.getElementById("decrement-minutes");
+const incrementSecondsButton = document.getElementById("increment-seconds");
+const decrementSecondsButton = document.getElementById("decrement-seconds");
 
-let timeLeft = 60;
+let timeLeft = 150; // 2:30 in seconds
 let isRunning = false;
 let animationFrameId = null;
 let fragmentAnimations = [];
 let startTime = 0;
 let pausedTimeRemaining = null;
 
-
-// function formatTime(ms) {
-//   const seconds = Math.floor(ms / 1000);
-//   const tenths = Math.floor((ms % 1000) / 100); // Extract tenths
-//   return `${seconds}.${tenths}s`;
-// }
-
 function formatTime(ms) {
-  const seconds = Math.floor(ms / 1000);
-  const hundredths = Math.floor((ms % 1000) / 10); // Extract hundredths
-  return `${seconds}.${hundredths}s`;
+  if (ms === null || ms === undefined) return "--:--";
+
+  const minutes = Math.floor(ms / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const hundredths = Math.floor((ms % 1000) / 10);
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")}.${hundredths
+    .toString()
+    .padStart(2, "0")}`;
 }
-// function formatTime(ms) {
-//   const seconds = Math.floor(ms / 1000);
-//   const thousandths = Math.floor((ms % 1000) / 1); // Extract hundredths
-//   return `${seconds}.${thousandths}s`;
-// }
 
+function updateDisplay() {
+  const minutes = parseInt(minutesInput.value) || 0;
+  const seconds = parseInt(secondsInput.value) || 0;
+  timeLeft = minutes * 60 + seconds;
 
+  if (timeLeft > 0) {
+    timerDisplay.textContent = formatTime(timeLeft * 1000);
+  } else {
+    timerDisplay.textContent = "--:--";
+  }
+}
+
+function incrementMinutes() {
+  const currentValue = parseInt(minutesInput.value) || 0;
+  if (currentValue < 5) {
+    minutesInput.value = currentValue + 1;
+    updateDisplay();
+  }
+}
+
+function decrementMinutes() {
+  const currentValue = parseInt(minutesInput.value) || 0;
+  if (currentValue > 0) {
+    minutesInput.value = currentValue - 1;
+    updateDisplay();
+  }
+}
+
+function incrementSeconds() {
+  const currentValue = parseInt(secondsInput.value) || 0;
+  if (currentValue < 59) {
+    secondsInput.value = currentValue + 1;
+    updateDisplay();
+  }
+}
+
+function decrementSeconds() {
+  const currentValue = parseInt(secondsInput.value) || 0;
+  if (currentValue > 0) {
+    secondsInput.value = currentValue - 1;
+    updateDisplay();
+  }
+}
 
 function createFragments() {
   tomatoArea.innerHTML = "";
-  const fragmentSize = 0.5; // Even smaller fragments
-  const numFragments = 750; // Many more fragments for blizzard effect
+  const fragmentSize = 0.5;
+  const numFragments = 750;
   const radius = 12;
 
   // Calculate how many fragments we need for each feature
   const circleFragments = Math.floor(numFragments * 0.65);
   const mouthFragments = Math.floor(numFragments * 0.15);
   const eyeFragments = Math.floor(numFragments * 0.1);
-  const hairFragments = Math.floor(numFragments * 0.1); // More fragments for hair
+  const hairFragments = Math.floor(numFragments * 0.1);
 
-  // Create fragments in a more controlled way
+  // Create all fragments at once
+  const fragments = [];
   for (let i = 0; i < numFragments; i++) {
     const fragment = document.createElement("div");
     fragment.classList.add("fragment");
+    fragments.push(fragment);
 
     // Calculate initial position in a circle
     const angle = (i / numFragments) * Math.PI * 2;
@@ -55,16 +98,16 @@ function createFragments() {
     const xPos = Math.cos(angle) * distanceFromCenter;
     const yPos = Math.sin(angle) * distanceFromCenter;
 
-    // Random starting positions in a wider circle with more chaos
+    // Wider starting positions for more dramatic effect
     const startAngle = Math.random() * Math.PI * 2;
-    const startDistance = 25 + Math.random() * 15; // Even wider starting area
+    const startDistance = 40 + Math.random() * 25;
     const randomX = Math.cos(startAngle) * startDistance + "rem";
     const randomY = Math.sin(startAngle) * startDistance + "rem";
 
-    // More chaotic mid-point positions
+    // More gradual mid-point positions
     const midAngle = (startAngle + angle) / 2 + (Math.random() - 0.5) * Math.PI;
     const midDistance =
-      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 8;
+      (startDistance + distanceFromCenter) / 2 + (Math.random() - 0.5) * 15;
     const midX = Math.cos(midAngle) * midDistance + "rem";
     const midY = Math.sin(midAngle) * midDistance + "rem";
 
@@ -75,9 +118,9 @@ function createFragments() {
     if (i < hairFragments) {
       // Hair fragments - create a curlicue pattern
       const t = i / hairFragments;
-      const curlRadius = 2; // Size of curl
-      const spiralT = t * 4 * Math.PI; // Number of spiral turns
-      const shrinkFactor = 1 - t * 0.5; // Spiral gets smaller towards the end
+      const curlRadius = 2;
+      const spiralT = t * 4 * Math.PI;
+      const shrinkFactor = 1 - t * 0.5;
       const hairX = Math.cos(spiralT) * curlRadius * shrinkFactor;
       const hairY = Math.sin(spiralT) * curlRadius * shrinkFactor - radius - 1;
       finalX = hairX + "rem";
@@ -133,9 +176,9 @@ function createFragments() {
       finalY = Math.sin(circleAngle) * frillyRadius + "rem";
     }
 
-    // More chaotic rotations
-    const randomRotation = Math.random() * 1800 - 900 + "deg"; // Even more rotation
-    const midRotation = Math.random() * 900 - 450 + "deg";
+    // More dramatic rotations
+    const randomRotation = Math.random() * 3600 - 1800 + "deg";
+    const midRotation = Math.random() * 1800 - 900 + "deg";
 
     fragment.style.setProperty("--animation-time", timeLeft + "s");
     fragment.style.setProperty("--random-x", randomX);
@@ -149,114 +192,110 @@ function createFragments() {
 
     tomatoArea.appendChild(fragment);
   }
+
+  // Start animations immediately
+  requestAnimationFrame(() => {
+    fragments.forEach((frag) => {
+      frag.style.animation = `moveToSmiley ${timeLeft}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+    });
+  });
 }
 
-
-
 function animateFragments() {
-  const fragments = document.querySelectorAll(".fragment");
-  fragmentAnimations = [];
-
-  // Calculate timing for perfect finish
-  const totalDuration = timeLeft * 1000;
-  const fragmentDelay = 5; // 5ms between each fragment start
-  const lastFragmentStart = fragments.length * fragmentDelay;
-
-  // Adjust animation duration to ensure all fragments finish exactly at timer end
-  fragments.forEach((frag, i) => {
-    const animation = setTimeout(() => {
-      // Calculate remaining time for this specific fragment
-      const remainingTime = totalDuration - i * fragmentDelay;
-      const adjustedDuration = remainingTime / 1000;
-      frag.style.animation = `moveToSmiley ${adjustedDuration}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
-    }, i * fragmentDelay);
-    fragmentAnimations.push(animation);
-  });
+  // No need for separate animation function anymore as it's handled in createFragments
 }
 
 function startTimer() {
   if (isRunning) return;
 
-  const newDuration = parseInt(durationInput.value);
-  if (newDuration >= 10 && newDuration <= 300) {
-    timeLeft = newDuration;
-  }
+  const minutes = parseInt(minutesInput.value) || 0;
+  const seconds = parseInt(secondsInput.value) || 0;
+  timeLeft = minutes * 60 + seconds;
 
-  isRunning = true;
+  if (timeLeft > 0 && timeLeft <= 300) {
+    isRunning = true;
 
-  // If we're resuming from a pause, adjust the start time
-  if (pausedTimeRemaining !== null) {
-    startTime = Date.now() - (timeLeft * 1000 - pausedTimeRemaining);
-    pausedTimeRemaining = null;
-  } else {
-    startTime = Date.now();
-  }
-
-  // Hide the base smiley face
-  const smiley = document.getElementById("smiley");
-  smiley.style.display = "none";
-
-  // Start the fragment animations
-  animateFragments();
-
-  function updateTimer() {
-    if (!isRunning) return;
-
-    const currentTime = Date.now();
-    const elapsedTime = currentTime - startTime;
-    const remainingTime = Math.max(0, timeLeft * 1000 - elapsedTime);
-
-    timerDisplay.textContent = formatTime(remainingTime);
-
-    if (remainingTime <= 0) {
-      isRunning = false;
-      // Freeze all fragments in their final positions
-      const fragments = document.querySelectorAll(".fragment");
-      fragments.forEach((frag) => {
-        const computedStyle = window.getComputedStyle(frag);
-        frag.style.transform = computedStyle.transform;
-        frag.style.animation = "none";
-      });
-      return;
+    if (pausedTimeRemaining !== null) {
+      startTime = Date.now() - (timeLeft * 1000 - pausedTimeRemaining);
+      pausedTimeRemaining = null;
+    } else {
+      startTime = Date.now();
     }
 
+    const smiley = document.getElementById("smiley");
+    smiley.style.display = "none";
+
+    createFragments();
+    animateFragments();
+    updateTimer();
+  }
+}
+
+function updateTimer() {
+  if (!isRunning) return;
+
+  const currentTime = Date.now();
+  const elapsedTime = currentTime - startTime;
+  const remainingTime = Math.max(0, timeLeft * 1000 - elapsedTime);
+
+  timerDisplay.textContent = formatTime(remainingTime);
+
+  if (remainingTime <= 0) {
+    isRunning = false;
+    const fragments = document.querySelectorAll(".fragment");
+    fragments.forEach((frag) => {
+      const computedStyle = window.getComputedStyle(frag);
+      frag.style.transform = computedStyle.transform;
+    });
+
+    const smiley = document.getElementById("smiley");
+    smiley.style.display = "block";
+    smiley.classList.add("smiley-show");
+  } else {
     animationFrameId = requestAnimationFrame(updateTimer);
   }
-
-  updateTimer();
 }
 
 function stopTimer() {
   if (!isRunning) return;
 
   isRunning = false;
-  cancelAnimationFrame(animationFrameId);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
 
-  // Store the remaining time for potential resume
-  const elapsedTime = Date.now() - startTime;
-  pausedTimeRemaining = Math.max(0, timeLeft * 1000 - elapsedTime);
-  timerDisplay.textContent = formatTime(pausedTimeRemaining);
-
-  // Pause fragment animations
-  fragmentAnimations.forEach((animation) => clearTimeout(animation));
-  const fragments = document.querySelectorAll(".fragment");
-  fragments.forEach((frag) => {
-    const computedStyle = window.getComputedStyle(frag);
-    frag.style.transform = computedStyle.transform;
-    frag.style.animation = "none";
-  });
+  const currentTime = Date.now();
+  const elapsedTime = currentTime - startTime;
+  pausedTimeRemaining = timeLeft * 1000 - elapsedTime;
 }
 
 function resetTimer() {
   isRunning = false;
-  cancelAnimationFrame(animationFrameId);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+
   pausedTimeRemaining = null;
-  timeLeft = parseInt(durationInput.value) || 30;
-  timerDisplay.textContent = formatTime(timeLeft * 1000);
-  createFragments();
+  const smiley = document.getElementById("smiley");
+  smiley.style.display = "none";
+  smiley.classList.remove("smiley-show");
+
+  const fragments = document.querySelectorAll(".fragment");
+  fragments.forEach((frag) => frag.remove());
+
+  updateDisplay();
 }
 
+// Event Listeners
 startButton.addEventListener("click", startTimer);
 stopButton.addEventListener("click", stopTimer);
 resetButton.addEventListener("click", resetTimer);
-createFragments();
+incrementMinutesButton.addEventListener("click", incrementMinutes);
+decrementMinutesButton.addEventListener("click", decrementMinutes);
+incrementSecondsButton.addEventListener("click", incrementSeconds);
+decrementSecondsButton.addEventListener("click", decrementSeconds);
+minutesInput.addEventListener("input", updateDisplay);
+secondsInput.addEventListener("input", updateDisplay);
+
+// Initialize display
+updateDisplay();
